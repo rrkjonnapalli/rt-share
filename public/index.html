@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free realtime text sharing app">
+  <meta name="keywords" content="Realtime, Collaborate, Text, Sharing">
+  <title>RT Share</title>
+  <link rel="stylesheet" href="/css/skeleton.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+
+<body>
+
+  <div class="container">
+    <h3>RT Share</h3>
+
+    <div class="row">
+      <div class="twelve columns">
+        <form id="form">
+          <label for="msg">Text</label>
+          <textarea class="u-full-width" id="msg" placeholder="Write text here..." rows="30" autofocus></textarea>
+        </form>
+        <div id="wrong-room" hidden></div>
+        <button class="button-primary" onclick="copyRoomLink()">Copy Room Link</button>
+      </div>
+    </div>
+  </div>
+  
+
+</body>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/client.js"></script>
+
+</html>
