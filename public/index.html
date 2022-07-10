@@ -8,32 +8,21 @@
   <meta name="description" content="Free realtime text sharing app">
   <meta name="keywords" content="Realtime, Collaborate, Text, Sharing">
   <title>RT Share</title>
-  <link rel="stylesheet" href="/css/skeleton.min.css" />
   <link rel="stylesheet" href="/css/main.css" />
 </head>
 
 <body>
 
-  <div class="container">
-    <h3>RT Share</h3>
-
-    <div class="row">
-      <div class="twelve columns">
-        <form id="form">
-          <label for="msg">Text</label>
-          <textarea class="u-full-width" id="msg" placeholder="Write text here..." rows="30" autofocus></textarea>
-        </form>
-        <div id="wrong-room" hidden></div>
-        <button class="button-primary" onclick="copyRoomLink()">Copy Room Link</button>
-      </div>
-    </div>
+  <div id="wrong-room" hidden></div>
+  <div id="container">
+    <div id="msg"></div>
+    <button disabled class="button-10 mt" id="roomLinkButton" type="button" onclick="copyRoomLink()">Copy Room
+      Link</button>
   </div>
-  
-
 </body>
 
-
-<script src="/socket.io/socket.io.js"></script>
+<script src="/js/socket.io.min.js"></script>
+<script src="/monaco-editor/vs/loader.js"></script>
 <script src="/client.js"></script>
 
 </html>

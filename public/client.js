@@ -1,12 +1,12 @@
 
 var socket = io();
-
+var editor = null;
 var path = window.location.pathname;
 var roomID = path.replace('/', '');
-
-var ec = document.getElementById('form');
-var fc = document.getElementById('wrong-room');
-var txt = document.getElementById('msg');
+var el = document.getElementById('msg');
+var btn = document.getElementById('roomLinkButton');
+var fc = document.getElementById('container');
+var errorContainer = document.getElementById('wrong-room');
 var time = 0;
 var isJoined = false;
 var cs = { width: '', height: '' };
@@ -45,13 +45,10 @@ class Debouncer {
   setTimer() {
     this.clear();
     this.timer = setTimeout(() => {
-      if (this.msg !== txt.value) {
-        this.msg = txt.value;
+      const value = editor.getModel().getValue();
+      if (this.msg !== value) {
+        this.msg = value;
         var data = { roomID, msg: this.msg };
-        if (isStyleChanged(txt.style)) {
-          cs = txt.style;
-          data.style = { height: cs.height, width: cs.width }
-        }
         if (isJoined) {
           socket.emit('msg', data);
         }
@@ -63,49 +60,40 @@ class Debouncer {
 }
 
 socket.on('set-msg', (data) => {
-  if (isStyleChanged(data.style)) {
-    cs = data.style;
-    Object.assign(txt.style, cs);
-    console.log(cs);
-  }
-  txt.value = data.msg;
+  const { msg = '' } = data || {};
+  editor.getModel().setValue(msg);
 });
 
 const debouncer = new Debouncer();
-
-txt.onkeydown = (e) => {
-  var ct = Date.now();
-  var diff = ct - time;
-  if (/F\d/.test(e.key) || [
-    'Alt', 'AltGraph', 'CapsLock', 'Control', 'Meta', 'FnLock', 'Fn', 'Shift', 'Symbol'
-  ].includes(e.key)) {
-    return;
-  }
-  if (e.key === 'Tab') {
-    e.preventDefault();
-    txt.value += '  ';
-  }
-  time = ct;
-  if (diff < 500) {
-    debouncer.setTimer();
-  }
-}
 
 function handleTransfer() {
   console.log('Currently in room -', roomID);
   isJoined = true;
 }
 
+function initializeEditor() {
+  require(['vs/editor/editor.main'], function () {
+    editor = monaco.editor.create(el, {
+      theme: 'vs-dark',
+      value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+      language: 'javascript',
+      automaticLayout: true
+    });
+    addEditorListener();
+  });
+}
+
 function initialize() {
   if (roomID) {
     if (!/^ROOM-[\w\d]{32}$/.test(roomID)) {
+      errorContainer.hidden = false;
       fc.hidden = true;
-      ec.hidden = false;
-      ec.innerText = 'Invalid room id - ' + roomID;
+      errorContainer.innerText = 'Invalid room id - ' + roomID;
       return;
     }
     socket.emit('join-room', roomID);
     socket.on('joined', () => {
+      initializeEditor();
       handleTransfer();
     })
   } else {
@@ -119,3 +107,29 @@ function initialize() {
 }
 
 initialize();
+
+
+const addEditorListener = () => {
+  btn.disabled = false;
+  editor.onDidChangeModelContent(() => {
+    var ct = Date.now();
+    var diff = ct - time;
+    time = ct;
+    if (diff < 500) {
+      debouncer.setTimer();
+    }
+  });
+  editor.onKeyDown((e) => {
+    const restricted = new Set([
+      'KeyS',
+      'KeyN',
+      'KeyT',
+      'KeyW'
+    ]);
+    if (e.ctrlKey && restricted.has(e.code)) {
+      console.log('Preventing CTRL +', e.code.slice(-1));
+      e.preventDefault();
+    }
+  });
+}
+require.config({ paths: { vs: '/monaco-editor/vs' } });

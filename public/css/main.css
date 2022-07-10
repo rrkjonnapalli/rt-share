@@ -1,14 +1,68 @@
+html,
 body {
   height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
 }
 
-/* .container {
-  margin: 0;
-} */
+body {
+  height: 98%;
+  width: 98%;
+  margin: 1%;
+  padding: 0;
+  background-color: #4d4d4d;
+}
 
-textarea {
-  height: auto;
+.title {
+  color: white;
+  margin: 0;
+}
+
+#container {
+  height: 89%;
+  margin: 0;
+}
+
+#wrong-room {
+  color: tomato;
+  text-align: center;
+  position: relative;
+  top: 50%;
+}
+
+#msg {
+  height: 100%;
+}
+
+.mt {
+  margin-top: 5px;
+}
+.button-10 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  background-origin: border-box;
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-10:focus {
+  box-shadow: inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2), 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), 0px 0px 0px 3.5px rgba(58, 108, 217, 0.5);
+  outline: 0;
+}
+
+.button-10:enabled {
+  background: linear-gradient(180deg, #4B91F7 0%, #367AF6 100%);
+}
+
+.button-10:disabled {
+  background: linear-gradient(196deg, #575c62 0%, #454950 100%);
+  /* box-shadow: inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2), 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), 0px 0px 0px 3.5px rgba(58, 108, 217, 0.5); */
+  outline: 0;
 }
