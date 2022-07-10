@@ -6,8 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Free realtime text sharing app">
-  <meta name="keywords" content="Realtime, Collaborate, Text, Sharing">
-  <title>RT Share</title>
+  <meta name="keywords" content="Realtime, Code, Collaborate, Text, Sharing">
+  <title>RTC Share</title>
   <link rel="stylesheet" href="/css/main.css" />
 </head>
 
@@ -16,8 +16,15 @@
   <div id="wrong-room" hidden></div>
   <div id="container">
     <div id="msg"></div>
-    <button disabled class="button-10 mt" id="roomLinkButton" type="button" onclick="copyRoomLink()">Copy Room
-      Link</button>
+    <div id="output" class="output">
+      <pre id="console-output"></pre>
+    </div>
+    <div>
+      <button disabled class="button-10 mt" id="roomLinkButton" type="button" onclick="app.copyRoomLink()">Copy Room
+        Link</button>
+      <button disabled class="button-10 mt " id="clearConsole" type="button" onclick="app.clearConsole()">Clear Console</button>
+      <button disabled class="button-10 mt " id="runCode" type="button" onclick="app.runCode()">Run</button>
+    </div>
   </div>
 </body>
 
