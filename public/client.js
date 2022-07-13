@@ -59,8 +59,10 @@ app.js = JSON.stringify;
 
 app.runCode = () => {
   const code = app.editor.getModel().getValue();
+
   // console.log(code);
   const runner = () => {
+    var app = null;
     try {
       eval(code);
     } catch (error) {
@@ -112,7 +114,7 @@ app.initializeEditor = () => {
         'function x() {',
         '\t/* IMPORTANT!!! Run at your own risk */',
         '\t/* CTRL+S & CTRL+R -> Run, CTRL+Q -> Clear Console */',
-        '\t/* Do not use app variable */',
+        '\t/* Try not to use app variable */',
         '\t/* Default console.log available at app.mainConsole */',
         '\tconsole.log("Hello world!");',
         '}',
