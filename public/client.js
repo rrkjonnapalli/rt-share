@@ -13,6 +13,7 @@ app.errorContainer = document.getElementById('wrong-room');
 app.consoleContainer = document.getElementById('console-output');
 app.time = 0;
 app.isJoined = false;
+app.mainConsole = console.log;
 
 app.copyRoomLink = () => {
   if (navigator && navigator.clipboard) {
@@ -60,31 +61,11 @@ app.runCode = () => {
   const code = app.editor.getModel().getValue();
   // console.log(code);
   const runner = () => {
-    const temp = console.log;
-    try {
-      console.log = function (...args) {
-        // temp(args);
-        for (let arg of args) {
-          if (arg instanceof Error) {
-            app.consoleContainer.innerText += arg;
-          } else if (typeof arg === 'object') {
-            app.consoleContainer.innerText += app.js(arg);
-          } else {
-            app.consoleContainer.innerText += arg;
-          }
-        }
-        app.consoleContainer.innerText += '\n'
-      };
-    } catch (error) {
-      alert('Unable to setup console !!!');
-    }
-
     try {
       eval(code);
     } catch (error) {
       console.log(error.stack);
     }
-    console.log = temp;
   }
   runner();
   app.consoleContainer.scrollIntoView(false);
@@ -102,16 +83,58 @@ app.handleTransfer = () => {
   app.isJoined = true;
 }
 
+app.setupConsole = (f) => {
+  // setting up console.log
+  try {
+    console.log = typeof f === 'function' ? f : function (...args) {
+      for (let arg of args) {
+        if (arg instanceof Error) {
+          app.consoleContainer.innerText += arg;
+        } else if (typeof arg === 'object') {
+          app.consoleContainer.innerText += app.js(arg);
+        } else {
+          app.consoleContainer.innerText += arg;
+        }
+        app.consoleContainer.innerText += ' ';
+      }
+      app.consoleContainer.innerText = app.consoleContainer.innerText.slice(0, -1) + '\n'
+    };
+  } catch (error) {
+    alert('Unable to setup console !!!');
+  }
+}
+
 app.initializeEditor = () => {
   require(['vs/editor/editor.main'], function () {
     app.editor = monaco.editor.create(app.editorEl, {
       theme: 'vs-dark',
-      value: ['function x() {','\t/* Do not use app variable */', '\tconsole.log("Hello world!");', '}'].join('\n'),
+      value: [
+        'function x() {',
+        '\t/* IMPORTANT!!! Run at your own risk */',
+        '\t/* CTRL+S & CTRL+R -> Run, CTRL+Q -> Clear Console */',
+        '\t/* Do not use app variable */',
+        '\t/* Default console.log available at app.mainConsole */',
+        '\tconsole.log("Hello world!");',
+        '}',
+        'x();'
+      ].join('\n'),
       language: 'javascript',
       automaticLayout: true
     });
-    console.log(app.editor);
-    app.addEditorListener();
+
+    // editor init check
+    setTimeout(() => {
+      if (!app.editor) {
+        const status = confirm('Unable to load the editor, Reloading the page !!!');
+        if (status) {
+          location.reload();
+        }
+      }
+      app.setupConsole();
+      app.addEditorListener();
+    }, 1000)
+
+    // console.log(app.editor);
   });
 }
 
@@ -150,7 +173,17 @@ app.changeEventListener = () => {
   }
 };
 
+app.restricted = new Set([
+  'KeyS',
+  'KeyN',
+  'KeyT',
+  'KeyW',
+  'KeyQ',
+  'KeyR'
+]);
 app.runKeys = new Set(['KeyS', 'KeyR']);
+app.consoleClearKeys = new Set(['KeyQ']);
+
 app.addEditorListener = () => {
   app.rlBtn.disabled = false;
   app.ccBtn.disabled = false;
@@ -160,18 +193,14 @@ app.addEditorListener = () => {
   app.editor.onDidChangeModelContent(app.changeEventListener);
 
   app.editor.onKeyDown((e) => {
-    const restricted = new Set([
-      'KeyS',
-      'KeyN',
-      'KeyT',
-      'KeyW',
-      'KeyR'
-    ]);
-    if (e.ctrlKey && restricted.has(e.code)) {
-      console.log('Preventing CTRL +', e.code.slice(-1));
+    if (e.ctrlKey && app.restricted.has(e.code)) {
+      // console.log('Preventing CTRL +', e.code.slice(-1));
       e.preventDefault();
       if (app.runKeys.has(e.code)) {
         app.runCode();
+      }
+      if (app.consoleClearKeys.has(e.code)) {
+        app.clearConsole();
       }
     }
   });

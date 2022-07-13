@@ -77,3 +77,11 @@ body {
 .button-10:disabled {
   background: linear-gradient(196deg, #575c62 0%, #454950 100%);
 }
+
+.copy-rights {
+  margin-top: 3%;
+  position: absolute;
+  right: 1%;
+  font-family: cursive;
+  font-weight: bold;
+}
