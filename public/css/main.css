@@ -79,9 +79,14 @@ body {
 }
 
 .copy-rights {
-  margin-top: 3%;
+  color: rgb(102 102 102);
+  margin-top: 1%;
   position: absolute;
   right: 1%;
   font-family: cursive;
+}
+.mail {
   font-weight: bold;
+  color: inherit;
+  text-decoration: none;
 }
